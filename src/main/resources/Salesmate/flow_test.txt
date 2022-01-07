@@ -1,0 +1,20 @@
+##############################
+#Testing MobileNumbering
+#QuickTest.java
+##############################
+#SetTextField("id","value")
+#ClickButton("id")
+#WaitUntilVisible("id")
+#OpenNavDrawer("id")
+#CloseNavDrawer("id")
+#ClickNavDrawerMenu("id recyclerview","Text menu")
+#GoHome()
+#GoRecent()
+##############################
+
+>startTest
+#Atur Server
+SetTextField("com.ionic.odsscm:id/_alamatServer","http://192.168.1.88:8080")
+ClickButton("com.ionic.odsscm:id/_simpanServer")
+
+>endTest
