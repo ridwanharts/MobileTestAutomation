@@ -1,0 +1,53 @@
+##############################
+#Testing Drivermate
+#QuickTest.java
+##############################
+#SetTextField("id","value")
+#ClickButton("id")
+#ClickButtonByTextView("text")
+#WaitUntilVisible("id")
+#OpenNavDrawer("id")
+#CloseNavDrawer("id")
+#ClickNavDrawerMenu("id recyclerview","Text menu")
+#GoHome()
+#GoRecent()
+#GoBack()
+#WaitElementWitText("element","text")
+#Sleep("millis")
+##############################
+
+>startTest
+#Atur Server
+WaitUntilVisible("com.ods.loadsheet:id/textfield_imei")
+SetTextField("com.ods.loadsheet:id/textfield_imei","863661044608300")
+SetTextField("com.ods.loadsheet:id/textfield_server","http://192.168.0.88:8080")
+ClickButton("com.ods.loadsheet:id/button_server")
+
+#Aktivasi
+WaitUntilVisible("com.ods.loadsheet:id/button_aktivasi")
+ClickButton("com.ods.loadsheet:id/button_aktivasi")
+
+#Download Master
+WaitUntilVisible("com.ods.loadsheet:id/main_settings")
+ClickButton("com.ods.loadsheet:id/main_settings")
+ClickButtonByTextView("Download Master")
+WaitUntilVisible("com.ods.loadsheet:id/button_positive")
+ClickButton("com.ods.loadsheet:id/button_positive")
+
+#Hasil Download
+Sleep("45000")
+WaitElementWitText("com.ods.loadsheet:id/text_title","Download Sukses")
+WaitUntilVisible("com.ods.loadsheet:id/button_positive")
+ClickButton("com.ods.loadsheet:id/button_positive")
+
+#Login
+WaitUntilVisible("com.ods.loadsheet:id/textfield_username")
+SetTextField("com.ods.loadsheet:id/textfield_username","105EMP040")
+SetTextField("com.ods.loadsheet:id/textfield_password","12345")
+ClickButton("com.ods.loadsheet:id/button_login")
+
+#Home
+ClickButton("com.ods.loadsheet:id/menu_start")
+ClickButton("com.ods.loadsheet:id/button_save_loadsheet")
+
+>endTest

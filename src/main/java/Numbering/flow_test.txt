@@ -4,12 +4,16 @@
 ##############################
 #SetTextField("id","value")
 #ClickButton("id")
+#ClickButtonByTextView("text")
 #WaitUntilVisible("id")
 #OpenNavDrawer("id")
 #CloseNavDrawer("id")
 #ClickNavDrawerMenu("id recyclerview","Text menu")
 #GoHome()
 #GoRecent()
+#GoBack()
+#WaitElementWitText("element","text")
+#Sleep("millis")
 ##############################
 
 >startTest

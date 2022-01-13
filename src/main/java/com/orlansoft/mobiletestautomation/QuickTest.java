@@ -4,7 +4,10 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
+import io.appium.java_client.remote.AutomationName;
+import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -12,14 +15,10 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class QuickTest {
 
@@ -29,6 +28,7 @@ public class QuickTest {
     String fileSetup = "SETUP.txt";
     String projectTest = "";
     String[] listFileTest = {};
+    String type = "";
 
     @BeforeMethod
     public void setup() {
@@ -36,15 +36,11 @@ public class QuickTest {
     }
 
     @Test
-    public void basicTest() {
+    public void basicTest() throws InterruptedException {
 
-        caps.setCapability("autoWebview",true);
-        String[] contextNames = driver.getContextHandles().toArray(new String[0]);
-        for (String contextName : contextNames) {
-            System.out.println(contextName); //prints out something like NATIVE_APP \n WEBVIEW_1
+        if (type.equals("hybrid")){
+            caps.setCapability("autoWebview",true);
         }
-        driver.context(contextNames[1]);
-
 
         int count = 1;
         for(String f : listFileTest){
@@ -67,11 +63,10 @@ public class QuickTest {
     }
 
     private void loadFileSetup(){
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(fileSetup);
-        InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        BufferedReader reader = new BufferedReader(streamReader);
         try {
+            FileReader fr = new FileReader("src/main/java/" + fileSetup);
+            //FileReader fr = new FileReader(fileSetup);
+            BufferedReader reader = new BufferedReader(fr);
             String text;
             while ((text = reader.readLine()) != null) {
                 if (text.contains("Set(")){
@@ -79,6 +74,7 @@ public class QuickTest {
                 }
                 if (text.startsWith(">endSetup")){
                     driver = new AndroidDriver<MobileElement>(new URL("http://0.0.0.0:4723/wd/hub"), caps);
+                    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
                     wait = new WebDriverWait(driver, 10);
                 }
             }
@@ -91,7 +87,9 @@ public class QuickTest {
         String sSubstring = text.substring(text.indexOf("(") + 1, text.indexOf(")"));
         String[] sSplit = sSubstring.split(",");
         sSplit[1] = sSplit[1].replace("\"", "");
-        if (text.startsWith("Set(\"fileTest\"")) {
+        if (text.startsWith("Set(\"type\"")){
+            type = sSplit[1];
+        }else if (text.startsWith("Set(\"fileTest\"")) {
             listFileTest = sSplit[1].split("\\|");
         }else if (text.startsWith("Set(\"projectTest\"")){
             projectTest = sSplit[1];
@@ -114,20 +112,21 @@ public class QuickTest {
         }else if (text.startsWith("Set(\"autoGrantPermissions\"")){
             caps.setCapability("autoGrantPermissions", sSplit[1]); //permission auto approve
         }
+        caps.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2);
     }
 
     private void loadFileTest(String f) {
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream inputStream;
+        String sFile;
         if (projectTest.equals("")){
-            inputStream = classLoader.getResourceAsStream(f);
+            sFile = "src/main/java/" + f;
+            //sFile = f;
         }else{
-            inputStream = classLoader.getResourceAsStream(projectTest + "/" +f);
+            sFile = "src/main/java/" + projectTest + "/" +f;
+            //sFile = projectTest + "/" +f;
         }
-        InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        BufferedReader reader = new BufferedReader(streamReader);
-
         try {
+            FileReader fr = new FileReader(sFile);
+            BufferedReader reader = new BufferedReader(fr);
             String text;
             int count = 1;
             while ((text = reader.readLine()) != null) {
@@ -138,7 +137,11 @@ public class QuickTest {
                     runSetTextField(text);
                     System.out.println("Line["+ count +"] " + text + " passed");
                 }else if (text.startsWith("ClickButton")) {
-                    runClickButton(text);
+                    if(text.contains("ClickButtonByTextView")){
+                        runClickButtonByTextView(text);
+                    }else{
+                        runClickButton(text);
+                    }
                     System.out.println("Line["+ count +"] " + text + " passed");
                 }else if(text.startsWith("OpenNavDrawer") || text.startsWith("CloseNavDrawer")) {
                     runOpenCloseDrawer(text);
@@ -152,8 +155,11 @@ public class QuickTest {
                 }else if (text.startsWith("Enter")) {
                     runEnter();
                     System.out.println("Line[" + count + "] " + text + " passed");
-                }else if (text.startsWith("Wait")){
-                    wait.wait(10);
+                }else if (text.startsWith("WaitElementWithText")) {
+                    runWaitElementWithText(text);
+                    System.out.println("Line[" + count + "] " + text + " passed");
+                }else if(text.startsWith("Sleep")) {
+                    runSleep(text);
                     System.out.println("Line[" + count + "] " + text + " passed");
                 }else{
                     if (text.startsWith(">endTest")){
@@ -167,11 +173,43 @@ public class QuickTest {
         }
     }
 
+    private void runSleep(String text) throws InterruptedException {
+        String millis = text.substring(text.indexOf("(")+1, text.indexOf(")"));
+        millis = millis.replace("\"", "");
+        Thread.sleep(Long.parseLong(millis));
+    }
+
     private void runWaitUntilVisible(String line){
         String id = line.substring(line.indexOf("(")+1, line.indexOf(")"));
         id = id.replace("\"", "");
         By view = By.id(id);
         wait.until(ExpectedConditions.visibilityOfElementLocated(view));
+    }
+
+    private void runWaitElementWithText(String line){
+        try{
+            line = line.substring(line.indexOf("(")+1, line.indexOf(")"));
+            String[] sSplit = line.split(",");
+            sSplit[0] = sSplit[0].replace("\"", "");
+            WebElement element= driver.findElementByXPath(sSplit[0]);
+            if (!element.getText().isEmpty()){
+                sSplit[1] = sSplit[1].replace("\"", "");
+                if (sSplit.length == 3){
+                    WebDriverWait w;
+                    System.out.println("Start Download");
+                    w = new WebDriverWait(driver, 100);
+                    w.until(ExpectedConditions.textToBePresentInElement(element, sSplit[1]));
+                    System.out.println("Done Download");
+                }else{
+                    wait.until(ExpectedConditions.textToBePresentInElement(element, sSplit[1]));
+                }
+            }else{
+                System.out.println(element.getTagName());
+            }
+            System.out.println(element.getText());
+        }catch (Exception e){
+            //System.out.println(e.getMessage());
+        }
     }
 
     private void runSetTextField(String line){
@@ -180,14 +218,38 @@ public class QuickTest {
         sSplit[0] = sSplit[0].replace("\"", "");
         By view = By.id(sSplit[0]);
         sSplit[1] = sSplit[1].replace("\"", "");
-        driver.findElement(view).setValue(sSplit[1]);
+        if (type.equals("hybrid")){
+            driver.findElementsByXPath(sSplit[0])
+                    .get(0).setValue(sSplit[1]);
+        }else{
+            driver.findElement(view).setValue(sSplit[1]);
+        }
     }
 
     private void runClickButton(String line){
-        String id = line.substring(line.indexOf("(")+1, line.indexOf(")"));
-        id = id.replace("\"", "");
-        By view = By.id(id);
-        driver.findElement(view).click();
+        try{
+            String id = line.substring(line.indexOf("(")+1, line.indexOf(")"));
+            id = id.replace("\"", "");
+            By view = By.id(id);
+
+            if (type.equals("hybrid")){
+                driver.findElementsByXPath(id).get(0).click();
+            }else{
+                driver.findElement(view).click();
+            }
+        }catch (Exception e){
+            //System.out.println(e.getMessage());
+        }
+    }
+
+    private void runClickButtonByTextView(String text){
+        try{
+            String id = text.substring(text.indexOf("(")+1, text.indexOf(")"));
+            id = id.replace("\"", "");
+            driver.findElement(By.xpath("//*[@text='" + id + "']")).click();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     private void runOpenCloseDrawer(String text){

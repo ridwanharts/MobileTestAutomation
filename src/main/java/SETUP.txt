@@ -1,6 +1,7 @@
 >startSetup
+Set("type","hybrid")
 Set("projectTest","Salesmate")
-Set("fileTest","flow_test.txt")
+Set("fileTest","flow_test.txt,"")
 Set("deviceName","2c1b9b4a")
 Set("udid","057585317d28")
 Set("platformName","Android")
