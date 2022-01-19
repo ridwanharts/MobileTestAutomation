@@ -2,20 +2,20 @@
 <testng-results skipped="0" failed="0" ignored="0" total="1" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="Mobile Test" duration-ms="78031" started-at="2022-01-13T14:55:56 WIB" finished-at="2022-01-13T14:57:14 WIB">
+  <suite name="Mobile Test" duration-ms="117426" started-at="2022-01-17T17:07:41 WIB" finished-at="2022-01-17T17:09:39 WIB">
     <groups>
     </groups>
-    <test name="Command line test" duration-ms="78031" started-at="2022-01-13T14:55:56 WIB" finished-at="2022-01-13T14:57:14 WIB">
+    <test name="Command line test" duration-ms="117426" started-at="2022-01-17T17:07:41 WIB" finished-at="2022-01-17T17:09:39 WIB">
       <class name="com.orlansoft.mobiletestautomation.QuickTest">
-        <test-method status="PASS" signature="setup()[pri:0, instance:com.orlansoft.mobiletestautomation.QuickTest@b97c004]" name="setup" is-config="true" duration-ms="12057" started-at="2022-01-13T14:55:56 WIB" finished-at="2022-01-13T14:56:08 WIB">
+        <test-method status="PASS" signature="setup()[pri:0, instance:com.orlansoft.mobiletestautomation.QuickTest@b97c004]" name="setup" is-config="true" duration-ms="10832" started-at="2022-01-17T17:07:41 WIB" finished-at="2022-01-17T17:07:52 WIB">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setup -->
-        <test-method status="PASS" signature="basicTest()[pri:0, instance:com.orlansoft.mobiletestautomation.QuickTest@b97c004]" name="basicTest" duration-ms="65542" started-at="2022-01-13T14:56:08 WIB" finished-at="2022-01-13T14:57:14 WIB">
+        <test-method status="PASS" signature="basicTest()[pri:0, instance:com.orlansoft.mobiletestautomation.QuickTest@b97c004]" name="basicTest" duration-ms="106057" started-at="2022-01-17T17:07:52 WIB" finished-at="2022-01-17T17:09:38 WIB">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- basicTest -->
-        <test-method status="PASS" signature="teardown()[pri:0, instance:com.orlansoft.mobiletestautomation.QuickTest@b97c004]" name="teardown" is-config="true" duration-ms="406" started-at="2022-01-13T14:57:14 WIB" finished-at="2022-01-13T14:57:14 WIB">
+        <test-method status="PASS" signature="teardown()[pri:0, instance:com.orlansoft.mobiletestautomation.QuickTest@b97c004]" name="teardown" is-config="true" duration-ms="513" started-at="2022-01-17T17:09:38 WIB" finished-at="2022-01-17T17:09:39 WIB">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- teardown -->

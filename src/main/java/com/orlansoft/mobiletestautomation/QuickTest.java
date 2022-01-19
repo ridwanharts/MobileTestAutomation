@@ -1,9 +1,11 @@
 package com.orlansoft.mobiletestautomation;
 
+import com.google.common.collect.ImmutableMap;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
+import io.appium.java_client.android.nativekey.KeyEventFlag;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.By;
@@ -74,7 +76,9 @@ public class QuickTest {
                 }
                 if (text.startsWith(">endSetup")){
                     driver = new AndroidDriver<MobileElement>(new URL("http://0.0.0.0:4723/wd/hub"), caps);
-                    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+                    if (!type.equals("hybrid")){
+                        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+                    }
                     wait = new WebDriverWait(driver, 10);
                 }
             }
@@ -137,8 +141,14 @@ public class QuickTest {
                     runSetTextField(text);
                     System.out.println("Line["+ count +"] " + text + " passed");
                 }else if (text.startsWith("ClickButton")) {
-                    if(text.contains("ClickButtonByTextView")){
+                    if(text.contains("ClickButtonByTextView")) {
                         runClickButtonByTextView(text);
+                    }else if(text.contains("ClickButtonTextView")) {
+                        runClickButtonTextView(text);
+                    }else if(text.contains("ClickButtonByAccessibilityId")) {
+                        runClickButtonByAccessibilityId(text);
+                    }else if(text.contains("ClickButtonByXPath")){
+                        runClickButtonByXPath(text);
                     }else{
                         runClickButton(text);
                     }
@@ -154,6 +164,9 @@ public class QuickTest {
                     System.out.println("Line["+ count +"] " + text + " passed");
                 }else if (text.startsWith("Enter")) {
                     runEnter();
+                    System.out.println("Line[" + count + "] " + text + " passed");
+                }else if(text.startsWith("Search")){
+                    runSearch();
                     System.out.println("Line[" + count + "] " + text + " passed");
                 }else if (text.startsWith("WaitElementWithText")) {
                     runWaitElementWithText(text);
@@ -242,11 +255,49 @@ public class QuickTest {
         }
     }
 
+    private void runClickButtonByXPath(String text){
+        try{
+            String xpath = text.substring(text.indexOf("(")+1, text.indexOf(")"));
+            xpath = xpath.replace("\"", "");
+            driver.findElementByXPath(xpath).click();
+        }catch (Exception e){
+            //System.out.println(e.getMessage());
+        }
+    }
+
+    private void runClickButtonByAccessibilityId(String text){
+        try{
+            String id = text.substring(text.indexOf("(")+1, text.indexOf(")"));
+            id = id.replace("\"", "");
+            driver.findElementByAccessibilityId(id).click();
+        }catch (Exception e){
+            //System.out.println(e.getMessage());
+        }
+
+    }
+
     private void runClickButtonByTextView(String text){
         try{
             String id = text.substring(text.indexOf("(")+1, text.indexOf(")"));
             id = id.replace("\"", "");
             driver.findElement(By.xpath("//*[@text='" + id + "']")).click();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void runClickButtonTextView(String text){
+        try{
+            String id = text.substring(text.indexOf("(")+1, text.indexOf(")"));
+            id = id.replace("\"", "");
+            List<MobileElement> elements = driver.findElementsByClassName("android.widget.TextView");
+            for(MobileElement e : elements){
+                String textDrawer = e.getText();
+                //System.out.println(textDrawer);
+                if(textDrawer.equalsIgnoreCase(id)){
+                    e.click();
+                }
+            }
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -293,6 +344,11 @@ public class QuickTest {
 
     private void runEnter(){
         driver.pressKey(new KeyEvent(AndroidKey.ENTER));
+    }
+
+    private void runSearch(){
+        //normal, unspecified, none, go, search, send, next, done, previous
+        driver.executeScript("mobile: performEditorAction", ImmutableMap.of("action", "Search"));
     }
 
     private void printError(String text){
