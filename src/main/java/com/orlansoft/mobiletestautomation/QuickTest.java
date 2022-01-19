@@ -66,8 +66,8 @@ public class QuickTest {
 
     private void loadFileSetup(){
         try {
-            FileReader fr = new FileReader("src/main/java/" + fileSetup);
-            //FileReader fr = new FileReader(fileSetup);
+            //FileReader fr = new FileReader("src/main/java/" + fileSetup);
+            FileReader fr = new FileReader(fileSetup);
             BufferedReader reader = new BufferedReader(fr);
             String text;
             while ((text = reader.readLine()) != null) {
@@ -122,11 +122,11 @@ public class QuickTest {
     private void loadFileTest(String f) {
         String sFile;
         if (projectTest.equals("")){
-            sFile = "src/main/java/" + f;
-            //sFile = f;
+            //sFile = "src/main/java/" + f;
+            sFile = f;
         }else{
-            sFile = "src/main/java/" + projectTest + "/" +f;
-            //sFile = projectTest + "/" +f;
+            //sFile = "src/main/java/" + projectTest + "/" +f;
+            sFile = projectTest + "/" +f;
         }
         try {
             FileReader fr = new FileReader(sFile);
