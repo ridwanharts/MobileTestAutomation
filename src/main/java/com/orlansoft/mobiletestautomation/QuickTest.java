@@ -2,12 +2,16 @@ package com.orlansoft.mobiletestautomation;
 
 import com.google.common.collect.ImmutableMap;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
-import io.appium.java_client.android.nativekey.KeyEventFlag;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.MobileCapabilityType;
+import io.appium.java_client.touch.LongPressOptions;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.ElementOption;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -19,8 +23,12 @@ import org.testng.annotations.Test;
 
 import java.io.*;
 import java.net.URL;
+import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.interactions.Actions;
 
 public class QuickTest {
 
@@ -123,10 +131,10 @@ public class QuickTest {
         String sFile;
         if (projectTest.equals("")){
             //sFile = "src/main/java/" + f;
-            sFile = f;
+            sFile = "test/"+f;
         }else{
             //sFile = "src/main/java/" + projectTest + "/" +f;
-            sFile = projectTest + "/" +f;
+            sFile = "test/"+projectTest + "/" +f;
         }
         try {
             FileReader fr = new FileReader(sFile);
@@ -153,6 +161,9 @@ public class QuickTest {
                         runClickButton(text);
                     }
                     System.out.println("Line["+ count +"] " + text + " passed");
+                }else if(text.startsWith("SetTextIDHybrid")) {
+                    runSetTextHybrid(text);
+                    System.out.println("Line["+ count +"] " + text + " passed");
                 }else if(text.startsWith("OpenNavDrawer") || text.startsWith("CloseNavDrawer")) {
                     runOpenCloseDrawer(text);
                     System.out.println("Line["+ count +"] " + text + " passed");
@@ -171,8 +182,23 @@ public class QuickTest {
                 }else if (text.startsWith("WaitElementWithText")) {
                     runWaitElementWithText(text);
                     System.out.println("Line[" + count + "] " + text + " passed");
+                }else if (text.startsWith("WaitText")) {
+                    runWaitElement(text);
+                    System.out.println("Line[" + count + "] " + text + " passed");
                 }else if(text.startsWith("Sleep")) {
                     runSleep(text);
+                    System.out.println("Line[" + count + "] " + text + " passed");
+                }else if(text.startsWith("TapCoordinate")) {
+                    runTouchCoordinate(text);
+                    System.out.println("Line[" + count + "] " + text + " passed");
+                }else if(text.startsWith("ScrollTextToCoorHybrid")) {
+                    runScrollTxttoCoorHybrid(text);
+                    System.out.println("Line[" + count + "] " + text + " passed");
+                }else if(text.startsWith("ScrollByCoorHybrid")) {
+                    runScrollByCoorHybrid(text);
+                    System.out.println("Line[" + count + "] " + text + " passed");
+                }else if(text.startsWith("ClickIDHybrid")) {
+                    runClickIDHybrid(text);
                     System.out.println("Line[" + count + "] " + text + " passed");
                 }else{
                     if (text.startsWith(">endTest")){
@@ -224,6 +250,22 @@ public class QuickTest {
             //System.out.println(e.getMessage());
         }
     }
+    
+    private void runWaitElement(String line){
+        try{
+            line = line.substring(line.indexOf("(")+1, line.indexOf(")"));
+            String[] sSplit = line.split(",");
+            sSplit[0] = sSplit[0].replace("\"", "");
+            MobileElement e = driver.findElementByAndroidUIAutomator(
+                    "new UiScrollable(new UiSelector()"
+                    + ".scrollable(true))"
+                    + ".scrollIntoView(new UiSelector()"
+                    + ".textContains(\"" +sSplit[0]+ "\"))");
+            wait.until(ExpectedConditions.textToBePresentInElement(e, sSplit[0]));
+        }catch (Exception e){
+            //System.out.println(e.getMessage());
+        }
+    }
 
     private void runSetTextField(String line){
         line = line.substring(line.indexOf("(")+1, line.indexOf(")"));
@@ -244,21 +286,17 @@ public class QuickTest {
             String id = line.substring(line.indexOf("(")+1, line.indexOf(")"));
             id = id.replace("\"", "");
             By view = By.id(id);
-
-            if (type.equals("hybrid")){
-                driver.findElementsByXPath(id).get(0).click();
-            }else{
-                driver.findElement(view).click();
-            }
+            driver.findElement(view).click();            
         }catch (Exception e){
             //System.out.println(e.getMessage());
         }
     }
-
+    
     private void runClickButtonByXPath(String text){
         try{
-            String xpath = text.substring(text.indexOf("(")+1, text.indexOf(")"));
-            xpath = xpath.replace("\"", "");
+            String xpath = text.substring(text.indexOf("(")+1, text.lastIndexOf(")"));
+            xpath = xpath.substring(0, xpath.length() - 1);
+            xpath = xpath.replaceFirst("\"", "");
             driver.findElementByXPath(xpath).click();
         }catch (Exception e){
             //System.out.println(e.getMessage());
@@ -267,7 +305,7 @@ public class QuickTest {
 
     private void runClickButtonByAccessibilityId(String text){
         try{
-            String id = text.substring(text.indexOf("(")+1, text.indexOf(")"));
+            String id = text.substring(text.indexOf("(")+1, text.lastIndexOf(")"));
             id = id.replace("\"", "");
             driver.findElementByAccessibilityId(id).click();
         }catch (Exception e){
@@ -354,5 +392,87 @@ public class QuickTest {
     private void printError(String text){
         System.out.println("Error translate test => " + text);
     }
+    
+    private void runTouchCoordinate(String text){
+        String xy = text.substring(text.indexOf("(")+1, text.lastIndexOf(")"));
+        xy = xy.replace("\"", "");
+        String[] coor = xy.split(",");
+        int x = Integer.valueOf(coor[0]);
+        int y = Integer.valueOf(coor[1]);
+        TouchAction touchAction = new TouchAction(driver);
+        touchAction.tap(PointOption.point(x, y)).perform()
+                .tap(PointOption.point(x, y)).perform()
+                .release();
+    }
+        
+    private void runScrollTxttoCoorHybrid(String text){
+        try {
+            String xy = text.substring(text.indexOf("(") + 1, text.lastIndexOf(")"));
+            xy = xy.replace("\"", "");
+            String[] coor = xy.split(",");
+            int x = Integer.valueOf(coor[1]);
+            int y = Integer.valueOf(coor[2]);
+                        
+            MobileElement e = driver.findElementByAndroidUIAutomator(
+                    "new UiScrollable(new UiSelector()"
+                    + ".scrollable(true))"
+                    + ".scrollIntoView(new UiSelector()"
+                    + ".textContains(\""+coor[0]+"\"))");
+            
+            TouchAction a = new TouchAction(driver);
+            a.longPress(new LongPressOptions().withElement(ElementOption.element(e)))
+                    .moveTo(new PointOption().withCoordinates(x, y))
+                    .release().perform();
+        } catch (Exception e) {
+            //System.out.println(e.getMessage());
+        }
+    }
+    
+    private void runScrollByCoorHybrid(String text){
+        try {
+            String xy = text.substring(text.indexOf("(") + 1, text.lastIndexOf(")"));
+            xy = xy.replace("\"", "");
+            String[] coor = xy.split(",");
+            int x = Integer.valueOf(coor[0]);
+            int y = Integer.valueOf(coor[1]);
+            int x1 = Integer.valueOf(coor[2]);
+            int y1 = Integer.valueOf(coor[3]);
+                                    
+            TouchAction a = new TouchAction(driver);
+            a.longPress(new LongPressOptions().withPosition(new PointOption().withCoordinates(x, y)))
+                    .moveTo(new PointOption().withCoordinates(x1, y1))
+                    .release().perform();
+        } catch (Exception e) {
+            //System.out.println(e.getMessage());
+        }
+    }
+    
+    private void runSetTextHybrid(String text) {
+        try {
+            String line = text.substring(text.indexOf("(") + 1, text.lastIndexOf(")"));
+            line = line.replace("\"", "");
+            String[] s = line.split(",");
+            MobileElement e = driver.findElementByAndroidUIAutomator(
+                    "new UiScrollable(new UiSelector()"
+                    + ".scrollable(true)).setMaxSearchSwipes(10)"
+                    + ".scrollIntoView(new UiSelector()"
+                    + ".resourceIdMatches(\".*" + s[0] + ".*\"))");
+            e.setValue(s[1]);
+        } catch (Exception e) {
+            //System.out.println(e.getMessage());
+        }
 
+    }
+    
+    private void runClickIDHybrid(String text){
+        String s = text.substring(text.indexOf("(") + 1, text.lastIndexOf(")"));
+        s = s.replace("\"", "");
+        MobileElement e = driver.findElementByAndroidUIAutomator(
+                "new UiScrollable(new UiSelector()"
+                + ".scrollable(true)).setMaxSearchSwipes(10)"
+                + ".scrollIntoView(new UiSelector()"
+                + ".resourceIdMatches(\".*" +s+ ".*\"))");
+        e.click();
+    }
+    
 }
