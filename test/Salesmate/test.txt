@@ -1,0 +1,85 @@
+>startTest
+
+WaitText("Berita Harian")
+Sleep("1500")
+
+ClickIDHybrid("_sideMenu")
+Sleep("2000")
+
+ClickIDHybrid("_kunjungan")
+Sleep("2000")
+
+ClickButtonByAccessibilityId("Pelanggan Baru")
+Sleep("1000")
+
+ClickIDHybrid("icInsertPelanggan")
+Sleep("1000")
+
+SetTextIDHybrid("CustName,PT. Testing");
+Sleep("1000")
+
+ClickIDHybrid("takePhotoToko")
+Sleep("5000")
+
+#Take photo toko (id button camera disesuaikan dengan aplikasi yang digunakan)	
+WaitUntilVisible("com.oppo.camera:id/shutter_button")
+ClickButton("com.oppo.camera:id/shutter_button")
+WaitUntilVisible("com.oppo.camera:id/done_button")
+ClickButton("com.oppo.camera:id/done_button")
+Sleep("3000")
+
+ScrollByCoorHybrid("644,800,644,100")
+Sleep("1000")
+
+SetTextIDHybrid("Owner_Name,Ridwan");
+Sleep("1000")
+
+#Textview ditambah posisi x,y scroll pastikan tidak terbalik
+ScrollTextToCoorHybrid("Pemilik,644,100")
+Sleep("1000")
+
+SetTextIDHybrid("PersonalID,1234567890123456");
+Sleep("1000")
+
+ScrollTextToCoorHybrid("Foto KTP,644,100")
+Sleep("1000")
+
+SetTextIDHybrid("NPWP,123456789012345");
+Sleep("1000")
+
+ScrollTextToCoorHybrid("No. NPWP,644,100")
+Sleep("1000")
+
+SetTextIDHybrid("Phones,081171717171");
+Sleep("1000")
+
+ScrollTextToCoorHybrid("Telepon,644,100")
+Sleep("1000")
+
+SetTextIDHybrid("Address,Jln. Surabaya No 15");
+Sleep("1000")
+
+SetTextIDHybrid("City,Surabaya");
+Sleep("1000")
+
+SetTextIDHybrid("Remarks,Percobaan Testing");
+Sleep("1000")
+
+#Scroll ke bawah
+ScrollByCoorHybrid("644,600,644,50")
+Sleep("1000")
+
+#Scroll ke atas
+ScrollByCoorHybrid("644,350,644,950")
+Sleep("1000")
+
+#Scroll ke atas
+ScrollByCoorHybrid("644,350,644,950")
+Sleep("3000")
+
+ClickIDHybrid("_simpan")
+Sleep("1000")
+
+>endTest
+
+

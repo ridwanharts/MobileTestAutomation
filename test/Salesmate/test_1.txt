@@ -1,0 +1,32 @@
+>startTest
+
+WaitText("Berita Harian")
+Sleep("1500")
+
+ClickIDHybrid("_sideMenu")
+Sleep("2000")
+
+ClickIDHybrid("_kunjungan")
+Sleep("2000")
+
+ClickButtonByAccessibilityId("Pelanggan Dalam Rute")
+Sleep("1000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+>endTest
+
+

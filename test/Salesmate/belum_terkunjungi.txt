@@ -1,0 +1,35 @@
+>startTest
+
+WaitText("Berita Harian")
+Sleep("1500")
+
+ClickIDHybrid("rvBelumTerkunjungi")
+Sleep("1000")
+
+ClickIDHybrid("_0")
+Sleep("1000")
+
+ClickIDHybrid("_kunjungan")
+Sleep("2000")
+
+ClickButtonByAccessibilityId("Pelanggan Dalam Rute")
+Sleep("1000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+ClickButtonByXPath("//android.view.View[@content-desc=""]/android.view.View")
+Sleep("2000")
+
+>endTest
+
+
