@@ -1,7 +1,7 @@
 >startSetup
 Set("type","hybrid")
 Set("projectTest","Salesmate")
-Set("fileTest","test.txt")
+Set("fileTest","insert_pelanggan_baru.txt")
 Set("deviceName","2c1b9b4a")
 Set("platformName","Android")
 Set("platformVersion","10")

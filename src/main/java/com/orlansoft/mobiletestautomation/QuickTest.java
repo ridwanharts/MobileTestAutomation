@@ -120,7 +120,7 @@ public class QuickTest {
         }else if (text.startsWith("Set(\"appActivity\"")){
             caps.setCapability("appActivity", sSplit[1]); //DeviceId from "adb devices" command
         }else if (text.startsWith("Set(\"noReset\"")){
-            caps.setCapability("noReset", sSplit[1]); //DeviceId from "adb devices" command
+            caps.setCapability("noReset", sSplit[1]); //If noReset is set to TRUE, the app data will NOT be cleared before this session starts.
         }else if (text.startsWith("Set(\"autoGrantPermissions\"")){
             caps.setCapability("autoGrantPermissions", sSplit[1]); //permission auto approve
         }
